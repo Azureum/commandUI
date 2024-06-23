@@ -46,7 +46,7 @@ def ComputerStats():
     elif ADLManager.getInstance().getDevices():
         print("test")
         GPU = str(ADLManager.getInstance().getDevices()[0].adapterName).strip("b'")
-        GPUMemTotal = GPUMemUsed = GPULoad = GPUTemp = "N/A"
+        GPUMemTotal = GPUMemUsed = GPULoad = GPUTemp = "N/A" #fix this 
     else:
         GPU = "No GPU detected"
         GPUMemTotal = GPUMemUsed = GPULoad = GPUTemp = "N/A"
