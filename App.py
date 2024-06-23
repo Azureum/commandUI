@@ -2,36 +2,14 @@ from customtkinter import *
 import time
 import psutil
 import platform
-import GPUtil # remove this faulty library :C
+import GPUtil # damn nvidia monopoly
+from pyadl import *
 import socket
 import subprocess
 import cpuinfo
-from win32pdh import PDH_FMT_DOUBLE
-from win32pdh import OpenQuery, CloseQuery, AddCounter
-from win32pdh import CollectQueryData, GetFormattedCounterValue
-from torch import *
+import winstats
 
 
-
-def get_freq():
-    # THANK u/RyanDy7 FOR THIS :PRAY:
-    ncores = 16
-    paths = []
-    counter_handles = []
-    query_handle = OpenQuery()
-    for i in range(ncores):
-        paths.append("\\Processor Information(0,{:d})\\% Processor Performance".format(i))
-        counter_handles.append(AddCounter(query_handle, paths[i]))
-    CollectQueryData(query_handle)
-    time.sleep(1)
-    CollectQueryData(query_handle)
-    freq = []
-    for i in range(ncores):
-        (counter_type, value) = GetFormattedCounterValue(counter_handles[i], PDH_FMT_DOUBLE)
-        freq.append(value*2.496/100)
-    # print("{:.3f} Ghz".format(max(freq)))
-    CloseQuery(query_handle)
-    return "{:.3f} GHz".format(max(freq))
 
 def get_size(bytes, suffix="B"):
     factor = 1024
@@ -48,9 +26,9 @@ def ComputerStats():
     if not WifiName:
         WifiName = "N/A"
 
-    CPU = cpuinfo.get_cpu_info()['brand_raw']
-    CPUFreq = get_freq()
-    CPUPercentage = psutil.cpu_percent()
+    CPU = cpuinfo.get_cpu_info()['brand_raw'] 
+    CPUFreq =  "at least 1ghz" #fix this for the love of god 
+    CPUPercentage = winstats.get_perf_data(r'\Processor(_Total)\% Processor Time',fmts='double', delay=100) #fix this for the love of god 
 
     DeviceMemory = psutil.virtual_memory()
     UsedMemory = get_size(DeviceMemory.used)
@@ -60,14 +38,18 @@ def ComputerStats():
 
     gpus = GPUtil.getGPUs()
     if gpus:
-        GPU = torch.cuda.get_device_name()
+        GPU = gpus[0].name
         GPUMemTotal = get_size(gpus[0].memoryTotal * 1024 * 1024)
         GPUMemUsed = get_size(gpus[0].memoryUsed * 1024 * 1024)
         GPULoad = f"{gpus[0].load * 100:.2f}%"
         GPUTemp = f"{gpus[0].temperature} °C"
+    elif ADLManager.getInstance().getDevices():
+        print("test")
+        GPU = str(ADLManager.getInstance().getDevices()[0].adapterName).strip("b'")
+        GPUMemTotal = GPUMemUsed = GPULoad = GPUTemp = "N/A"
     else:
         GPU = "No GPU detected"
-        GPUMemTotal = GPUMemoryUsed = GPULoad = GPUTemp = "N/A"
+        GPUMemTotal = GPUMemUsed = GPULoad = GPUTemp = "N/A"
 
     return DeviceIP, DeviceName, WifiName, CPU, CPUFreq, CPUPercentage, UsedMemory, TotalMemory, GPU, GPUMemTotal, GPUMemUsed, GPULoad, GPUTemp
 
