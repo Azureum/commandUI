@@ -1,9 +1,9 @@
-TEMPPASSWORD1
+CHANGEMEPLEASE
 username
 hash
 wifiname
 runtime
-gpu
 cpu
+gpu
 memory usage
 cpu usage

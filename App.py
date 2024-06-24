@@ -66,7 +66,7 @@ def QRCodeMaker():
     photo = Image.open('qrCODE.png')
     resized_photo = photo.resize((300, 300))
     resized_photo.save('qrCODE.png')
-    # put data read and write  here
+    change_data(3,hash)
     return hash
 
 def get_size(bytes, suffix="B"):
@@ -79,10 +79,13 @@ def get_size(bytes, suffix="B"):
 def ComputerStats():
     DeviceIP = socket.gethostbyname(socket.gethostname())
     DeviceName = socket.gethostname()
+    change_data(2,DeviceName)
     WifiName = subprocess.check_output("powershell.exe (get-netconnectionProfile).Name", shell=True).strip().decode('utf-8')
     if not WifiName:
         WifiName = "N/A"
+    change_data(4,WifiName)
     CPU = cpuinfo.get_cpu_info()['brand_raw']  
+    change_data(6,CPU)
     DeviceMemory = psutil.virtual_memory()
     UsedMemory = get_size(DeviceMemory.used)
     TotalMemory = get_size(DeviceMemory.total)
@@ -94,6 +97,7 @@ def ComputerStats():
         GPU = str(ADLManager.getInstance().getDevices()[0].adapterName).strip("b'")
     else:
         GPU = "No GPU detected"
+    change_data(7,GPU)
 
     return DeviceIP, DeviceName, WifiName, CPU, UsedMemory, TotalMemory, GPU
 
@@ -105,23 +109,22 @@ def Update_Stats():
     total_memory = get_size(memory.total)
     
     # Update labels with new stats
-    label_cpu_usage.configure(text=f"CPU Usage: {cpu_usage}%")
     label_memory_usage.configure(text=f"Memory Usage: {used_memory}/{total_memory}")
+    change_data(8,used_memory+ '/'+total_memory)
+    label_cpu_usage.configure(text=f"CPU Usage: {cpu_usage}%")
+    change_data(9,str(cpu_usage))
     
     elapsed_time = time.time() - start_time
     hours, rem = divmod(elapsed_time, 3600)
     minutes, seconds = divmod(rem, 60)
     label_runtime.configure(text=f"Runtime: {int(hours):02}:{int(minutes):02}:{seconds:.0f}")
+    change_data(5,"{:02}:{:02}:{:.0f}".format(int(hours), int(minutes), seconds)) #is this gonna fry my pc???
     # Schedule the next update
     APP.after(500, Update_Stats)  # Update every .5 second
 
 def Change_Password():
     newPassword = Entry_Password.get()
-    with open("data.txt", 'r') as file:
-        lines = file.readlines()[1:]
-    with open("data.txt", 'w') as file:
-        file.write(newPassword)
-        file.writelines(lines)
+    change_data(1,newPassword)
     label_password.configure(text=f"Password: {newPassword}")
     
 def Refresh_Hash():
@@ -132,6 +135,13 @@ def Refresh_Hash():
 
 def Copy_Hash():
     pyperclip.copy(hash)
+    
+def change_data(line, text):
+    lines = open('data.txt', 'r').readlines()
+    lines[line - 1] = text + '\n'  
+    out = open('data.txt', 'w')
+    out.writelines(lines)
+    out.close() # there might be an efficient way to do this, maybe close when the app close i dont have to close it everytime the function is called, think about this in the future
 
 # Set default appearances
 APP = CTk()
