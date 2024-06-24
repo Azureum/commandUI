@@ -14,6 +14,7 @@ import segno
 from PIL import Image
 import tkinter as tk
 from tkinter import PhotoImage
+import pyperclip
 
 start_time = time.time()
 
@@ -83,7 +84,7 @@ def ComputerStats():
 
     return DeviceIP, DeviceName, WifiName, CPU, UsedMemory, TotalMemory, GPU
 
-def update_stats():
+def Update_Stats():
     # Get updated CPU and memory usage
     cpu_usage = psutil.cpu_percent(interval=1)
     memory = psutil.virtual_memory()
@@ -99,10 +100,19 @@ def update_stats():
     minutes, seconds = divmod(rem, 60)
     label_runtime.configure(text=f"Runtime: {int(hours):02}:{int(minutes):02}:{seconds:.0f}")
     # Schedule the next update
-    APP.after(500, update_stats)  # Update every .5 second
+    APP.after(500, Update_Stats)  # Update every .5 second
 
 def Change_Password():
-    print("WIP")
+    state = CTkEntry.cget("")
+    
+def Refresh_Hash():
+    hash  = QRCodeMaker()
+    label_hash.configure(text=hash[0:45])
+    QR_LABEL.configure(image=PhotoImage(file='qrCODE.png'))
+    
+
+def Copy_Hash():
+    pyperclip(hash)
 
 # Set default appearances
 APP = CTk()
@@ -111,6 +121,28 @@ APP.geometry("1000x700")
 APP.resizable(False, False)
 
 DeviceIP, DeviceName, WifiName, CPU, UsedMemory, TotalMemory, GPU = ComputerStats()
+
+# Below is the QR Code
+
+QRFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=325, height=325)
+QRFRAME.place(x=650, y=390)  
+hash = QRCodeMaker()
+QRCODEImage = PhotoImage(file='qrCODE.png')
+Phrase_Label = CTkLabel(master=APP, text="Hash", font=("Arial", 30, "bold"))
+Phrase_Label.place(x=760,y=350)
+QR_LABEL = CTkLabel(master=QRFRAME,text="",  image=QRCODEImage) #SOME WARNING OVER HERE
+QR_LABEL.pack()
+
+# Below is for the Stats Frame
+
+STATSFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=600, height=200)
+STATSFRAME.pack(expand=True, anchor="sw", padx=10, pady=10)
+
+label6 = CTkLabel(master=STATSFRAME, text=f"CPU: {CPU}", font=("Arial", 30), text_color = "black") 
+label6.place(rely=0.1, relx=0.01, anchor="nw")
+
+label7 = CTkLabel(master=STATSFRAME, text=f"GPU: {GPU}", font=("Arial", 30), text_color = "black")
+label7.place(rely=0.3, relx=0.01, anchor="nw")
 
 # Main labels
 
@@ -138,16 +170,15 @@ Button_Password.place(rely=0.37, relx=0.01, anchor="nw")
 Entry_Password = CTkEntry(master=APP, placeholder_text="Enter new Password",width=300)
 Entry_Password.place(rely=0.37, relx=0.16, anchor="nw")
 
-# Below is for the Stats Frame
+label_hash = CTkLabel(master=APP, text=hash[0:45] + "...",width=1)
+label_hash.place(rely=0.42, relx=0.16, anchor="nw")
 
-STATSFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=600, height=200)
-STATSFRAME.pack(expand=True, anchor="sw", padx=10, pady=10)
+copy_hash = CTkButton(master=APP, text="Copy Hash", command=Copy_Hash)
+copy_hash.place(rely=0.42, relx=0.01, anchor="nw")
 
-label6 = CTkLabel(master=STATSFRAME, text=f"CPU: {CPU}", font=("Arial", 30), text_color = "black") 
-label6.place(rely=0.1, relx=0.01, anchor="nw")
+label_refresh_hash = CTkButton(master=APP, text="Refresh Hash", command=Refresh_Hash)
+label_refresh_hash.place(rely=0.47, relx=0.01, anchor="nw")
 
-label7 = CTkLabel(master=STATSFRAME, text=f"GPU: {GPU}", font=("Arial", 30), text_color = "black")
-label7.place(rely=0.3, relx=0.01, anchor="nw")
 
 # Dynamic labels for CPU and memory usage
 label_memory_usage = CTkLabel(master=STATSFRAME, text=f"Memory Usage: {UsedMemory}/{TotalMemory}", font=("Arial", 30), text_color = "black")
@@ -157,21 +188,10 @@ label_cpu_usage = CTkLabel(master=STATSFRAME, text="CPU Usage: 0%", font=("Arial
 label_cpu_usage.place(rely=0.7, relx=0.01, anchor="nw")
 
 
-# Below is the QR Code
-
-QRFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=325, height=325)
-QRFRAME.place(x=650, y=390)  
-hash = QRCodeMaker()
-QRCODEImage = PhotoImage(file='qrCODE.png')
-Phrase_Label = CTkLabel(master=APP, text="Hash", font=("Arial", 30, "bold"))
-Phrase_Label.place(x=760,y=350)
-QR_LABEL = CTkLabel(master=QRFRAME,text="",  image=QRCODEImage) #SOME WARNING OVER HERE
-QR_LABEL.pack()
-
 
 
 # Start updating stats
-APP.after(500, update_stats)  # Start the update loop
+APP.after(500, Update_Stats)  # Start the update loop
 
 APP.mainloop()
 
