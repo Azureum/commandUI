@@ -15,8 +15,26 @@ from PIL import Image
 import tkinter as tk
 from tkinter import PhotoImage
 import pyperclip
+from flask import Flask, request, jsonify
 
 start_time = time.time()
+
+# running flask server
+server = Flask(__name__)
+
+@server.route("/get-data/verification")
+def get_data(verification):
+    data = {
+        "user": "yap"
+    }
+
+    if verification == "something":
+        return jsonify(data), 200
+    else:
+        return 403
+
+if  __name__ == "__main__":
+    server.run(debug=True)
 
 
 data = open("data.txt", "r") 
@@ -103,7 +121,13 @@ def Update_Stats():
     APP.after(500, Update_Stats)  # Update every .5 second
 
 def Change_Password():
-    state = CTkEntry.cget("")
+    newPassword = Entry_Password.get()
+    with open("data.txt", 'r') as file:
+        lines = file.readlines()[1:]
+    with open("data.txt", 'w') as file:
+        file.write(newPassword)
+        file.writelines(lines)
+    label_password.configure(text=f"Password: {newPassword}")
     
 def Refresh_Hash():
     hash  = QRCodeMaker()
@@ -112,7 +136,7 @@ def Refresh_Hash():
     
 
 def Copy_Hash():
-    pyperclip(hash)
+    pyperclip.copy(hash)
 
 # Set default appearances
 APP = CTk()
@@ -155,13 +179,13 @@ label1.place(rely=0.1, relx=0.01, anchor="nw")
 label2 = CTkLabel(master=APP, text=f"Device IP: {DeviceIP}", font=("Arial", 30))
 label2.place(rely=0.15, relx=0.01, anchor="nw")
 
-label2 = CTkLabel(master=APP, text=f"Password: {password}", font=("Arial", 30)) #do a click to reveal here or something
-label2.place(rely=0.2, relx=0.01, anchor="nw")
+label_password = CTkLabel(master=APP, text=f"Password: {password}", font=("Arial", 30)) #do a click to reveal here or something
+label_password.place(rely=0.2, relx=0.01, anchor="nw")
 
 label4 = CTkLabel(master=APP, text=f"Wifi Name: {WifiName}", font=("Arial", 30))
 label4.place(rely=0.25, relx=0.01, anchor="nw")
 
-label_runtime = CTkLabel(master=APP, text=f"Runtime: 1 bajillion", font=("Arial", 30))
+label_runtime = CTkLabel(master=APP, text=f"Runtime: loading", font=("Arial", 30))
 label_runtime.place(rely=0.3, relx=0.01, anchor="nw")
 
 Button_Password = CTkButton(master=APP, text="Change Password", command=Change_Password)
@@ -192,6 +216,7 @@ label_cpu_usage.place(rely=0.7, relx=0.01, anchor="nw")
 
 # Start updating stats
 APP.after(500, Update_Stats)  # Start the update loop
+
 
 APP.mainloop()
 
