@@ -15,26 +15,21 @@ from PIL import Image
 import tkinter as tk
 from tkinter import PhotoImage
 import pyperclip
-from flask import Flask, request, jsonify
 
 start_time = time.time()
 
-# running flask server
-server = Flask(__name__)
-
-@server.route("/get-data/verification")
-def get_data(verification):
-    data = {
-        "user": "yap"
-    }
-
-    if verification == "something":
-        return jsonify(data), 200
-    else:
-        return 403
-
-if  __name__ == "__main__":
-    server.run(debug=True)
+'''
+data stored:
+password
+username
+hash
+wifiname
+runtime
+gpu
+cpu
+memory usage
+cpu usage
+'''
 
 
 data = open("data.txt", "r") 
@@ -71,6 +66,7 @@ def QRCodeMaker():
     photo = Image.open('qrCODE.png')
     resized_photo = photo.resize((300, 300))
     resized_photo.save('qrCODE.png')
+    # put data read and write  here
     return hash
 
 def get_size(bytes, suffix="B"):
@@ -81,7 +77,6 @@ def get_size(bytes, suffix="B"):
         bytes /= factor
 
 def ComputerStats():
-    DeviceINFO = platform.uname()
     DeviceIP = socket.gethostbyname(socket.gethostname())
     DeviceName = socket.gethostname()
     WifiName = subprocess.check_output("powershell.exe (get-netconnectionProfile).Name", shell=True).strip().decode('utf-8')

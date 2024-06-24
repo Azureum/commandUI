@@ -1,1 +1,9 @@
 TEMPPASSWORD1
+username
+hash
+wifiname
+runtime
+gpu
+cpu
+memory usage
+cpu usage
