@@ -18,7 +18,6 @@ import pyperclip
 from subprocess import call
 import threading
 import pyautogui
-import pyautogui
 
 start_time = time.time()
 
@@ -37,8 +36,6 @@ cpu usage
 # Flask
 def start_API():
     call(["python", "flaskAPI.py"])
-    
-data = open("data.txt", "r")  # bro please in the future optimize this holy moly why have u never realized 
     
 data = open("data.txt", "r")  # bro please in the future optimize this holy moly why have u never realized 
 password = data.readline()
@@ -250,8 +247,6 @@ switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
 
 switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
 switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
-
-
 
 # Dynamic labels for CPU and memory usage
 label_memory_usage = CTkLabel(master=STATSFRAME, text=f"Memory Usage: {UsedMemory}/{TotalMemory}", font=("Arial", 30), text_color = "black")
