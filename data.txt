@@ -1,10 +1,10 @@
 password
-username
-hash
-wifiname
-runtime
-cpu
-gpu
-memory usage
-cpu usage
-recallon
+device
+ccf091902ee9011e112fddb041d34c79dc1d206e1fc541a098ab9247388920fe598fbdb9dfc549d925caa37eb2ed3ad07f89b0281930efdce20356ad953fd1bb
+xfinitywifi
+00:00:8
+12th Gen Intel(R) Core(TM) i5-12600K
+AMD Radeon RX 7900 XT
+19.21GB/31.75GB
+5.5
+recalloff

@@ -17,6 +17,7 @@ from tkinter import PhotoImage
 import pyperclip
 from subprocess import call
 import threading
+import pyautogui
 
 start_time = time.time()
 
@@ -35,9 +36,15 @@ cpu usage
 # Flask
 def start_API():
     call(["python", "flaskAPI.py"])
-
-data = open("data.txt", "r") 
+    
+data = open("data.txt", "r")  # bro please in the future optimize this holy moly why have u never realized 
 password = data.readline()
+
+recallToggle = 0
+with open('data.txt', 'r') as data:
+    lines = data.readlines()
+    if lines[9].strip() == "recallon":
+        recallToggle = 1
 
 # Generate something random (I plastered a bunch of stuff together praying its random)
 def Mixer():
@@ -148,9 +155,17 @@ def change_data(line, text):
     out.close() # there might be an efficient way to do this, maybe close when the app close i dont have to close it everytime the function is called, think about this in the future
     
     
-#
+# kinda ironic, that im getting the code for something similar to the recall system from a video that teaches how to make malware? (the youtuber does like security stuff)
 def recall_system(): # im so funny with naming
-    print("WIP")
+    Screenshot = pyautogui.screenshot()
+    Screenshot.save("Screenshot.png")
+    APP.after(1900, recall_system)  #take a screenshot every 1.9 seconds
+    
+def recall_toggle():
+    if switch_recall.get() == 1:
+        change_data(10,"recallof")
+    else:
+        change_data(10,"recalloff")
 
 # Set default appearances
 APP = CTk()
@@ -217,6 +232,10 @@ copy_hash.place(rely=0.42, relx=0.01, anchor="nw")
 label_refresh_hash = CTkButton(master=APP, text="Refresh Hash", command=Refresh_Hash)
 label_refresh_hash.place(rely=0.47, relx=0.01, anchor="nw")
 
+switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
+switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
+
+
 
 # Dynamic labels for CPU and memory usage
 label_memory_usage = CTkLabel(master=STATSFRAME, text=f"Memory Usage: {UsedMemory}/{TotalMemory}", font=("Arial", 30), text_color = "black")
@@ -233,8 +252,8 @@ APP.after(500, Update_Stats)  # Start the update loop
 with open('data.txt', 'r') as file:
     lines = file.readlines()
     if lines[9] == "recallon":
-        print("next commit")
-
+        APP.after(500, recall_system)
+        
 # Start Flask API in a new thread
 api_thread = threading.Thread(target=start_API)
 api_thread.daemon = True
