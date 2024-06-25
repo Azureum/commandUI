@@ -1,9 +1,9 @@
-TEMPPASSWORD
-device
-eb4f348c0d23baebee1e09d6117d6cd0f05ecf20b4ffe18fff99ab5b93b5f74e68f1fa8ac7de57535df9f58924be5018710e9b33b5005247bc0e834817da015f
-Winsnet
-00:00:9
-12th Gen Intel(R) Core(TM) i5-12600K
-AMD Radeon RX 7900 XT
-21.42GB/31.75GB
-6.1
+password
+username
+hash
+wifiname
+runtime
+cpu
+gpu
+memory usage
+cpu usage
