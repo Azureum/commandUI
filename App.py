@@ -15,6 +15,8 @@ from PIL import Image
 import tkinter as tk
 from tkinter import PhotoImage
 import pyperclip
+from subprocess import call
+import threading
 
 start_time = time.time()
 
@@ -30,7 +32,9 @@ cpu
 memory usage
 cpu usage
 '''
-
+# Flask
+def start_API():
+    call(["python", "flaskAPI.py"])
 
 data = open("data.txt", "r") 
 password = data.readline()
@@ -219,9 +223,13 @@ label_cpu_usage.place(rely=0.7, relx=0.01, anchor="nw")
 
 
 
-# Start updating stats
 APP.after(500, Update_Stats)  # Start the update loop
 
+# Start Flask API in a new thread
+api_thread = threading.Thread(target=start_API)
+api_thread.daemon = True
+api_thread.start()
 
+# Start Tkinter main loop in the main thread
 APP.mainloop()
 

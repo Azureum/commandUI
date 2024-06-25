@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
-
 # running flask server
 server = Flask(__name__)
+
 
 @server.route("/get-data/<verification>")
 def get_data(verification):
