@@ -18,6 +18,7 @@ import pyperclip
 from subprocess import call
 import threading
 import pyautogui
+from pynput import *
 
 start_time = time.time()
 
@@ -168,6 +169,13 @@ def recall_toggle():
         if after_id is not None:
             APP.after_cancel(after_id) 
             after_id = None
+                
+
+def device_inputs(key, filenumber):
+    with open(f"macro{filenumber}")
+
+def macro_recorder(number):
+    listener = keyboard.Listener(on_press=device_inputs(number))
 
 # Set default appearances
 APP = CTk()
