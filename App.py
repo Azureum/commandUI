@@ -176,21 +176,38 @@ def recall_toggle():
                 
 
 # Macro Recorder
+last_input_time = None
+
 def keyboard_inputs(key, filenumber):
+    print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'pressed {key}\n')
 
 def mouse_move(x, y, filenumber):
+    print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'moved {x} {y}\n')
 
 def mouse_scroll(x, y, sx, sy, filenumber):
+    print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'scrolled {x} {y} {sx} {sy}\n')
 
 def mouse_click(x, y, is_pressed, filenumber):
+    print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'click {"pressed" if is_pressed else "released"} {x} {y}\n')
+        
+        
+def print_time_since_last_input(filenumber):
+    global last_input_time
+    current_time = time.time()
+    if last_input_time is not None:
+        time_since_last_input = round(current_time - last_input_time,2)
+    with open(f"macros/macro{filenumber}.txt", 'a') as file:
+        file.write(f'{time_since_last_input}\n')
+    last_input_time = current_time
+    
 
 def macro_recorder(number):
     global macro_check
