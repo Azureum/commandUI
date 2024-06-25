@@ -1,4 +1,4 @@
-password
+plschangeme
 username
 hash
 wifiname
@@ -7,4 +7,4 @@ cpu
 gpu
 memory usage
 cpu usage
-recallon
+recalloff

@@ -17,6 +17,7 @@ from tkinter import PhotoImage
 import pyperclip
 from subprocess import call
 import threading
+import pyautogui
 
 start_time = time.time()
 
@@ -35,9 +36,11 @@ cpu usage
 # Flask
 def start_API():
     call(["python", "flaskAPI.py"])
-
-data = open("data.txt", "r") 
+    
+data = open("data.txt", "r")  # bro please in the future optimize this holy moly why have u never realized 
 password = data.readline()
+
+after_id = None
 
 # Generate something random (I plastered a bunch of stuff together praying its random)
 def Mixer():
@@ -121,8 +124,8 @@ def Update_Stats():
     elapsed_time = time.time() - start_time
     hours, rem = divmod(elapsed_time, 3600)
     minutes, seconds = divmod(rem, 60)
-    label_runtime.configure(text=f"Runtime: {int(hours):02}:{int(minutes):02}:{seconds:.0f}")
-    change_data(5,"{:02}:{:02}:{:.0f}".format(int(hours), int(minutes), seconds)) #is this gonna fry my pc???
+    label_runtime.configure(text=f"Runtime: {int(hours):02}:{int(minutes):02}:{seconds:.02f}")
+    change_data(5,"{:02}:{:02}:{:.02f}".format(int(hours), int(minutes), seconds)) #is this gonna fry my pc???
     # Schedule the next update
     APP.after(500, Update_Stats)  # Update every .5 second
 
@@ -147,16 +150,37 @@ def change_data(line, text):
     out.writelines(lines)
     out.close() # there might be an efficient way to do this, maybe close when the app close i dont have to close it everytime the function is called, think about this in the future
     
-    
-#
+# kinda ironic, that im getting the code for something similar to the recall system from a video that teaches how to make malware? (the youtuber does like security stuff)
 def recall_system(): # im so funny with naming
-    print("WIP")
+    global after_id
+    Screenshot = pyautogui.screenshot()
+    Screenshot.save("Screenshot.png")
+    APP.after(1900, recall_system)  #take a screenshot every 1.9 seconds
+    
+def recall_toggle():
+    global after_id
+    if switch_recall.get() == 1:
+        change_data(10, "recallon")
+        if after_id is None: 
+            recall_system()
+    else:
+        change_data(10, "recalloff")
+        if after_id is not None:
+            APP.after_cancel(after_id) 
+            after_id = None
 
 # Set default appearances
 APP = CTk()
 set_appearance_mode("Dark")
 APP.geometry("1000x700")
 APP.resizable(False, False)
+
+recallToggle = IntVar()
+recallToggle.set(0)
+with open('data.txt', 'r') as data:
+    lines = data.readlines()
+    if lines[9].strip() == "recallon":
+        recallToggle.set(1)
 
 DeviceIP, DeviceName, WifiName, CPU, UsedMemory, TotalMemory, GPU = ComputerStats()
 
@@ -217,6 +241,10 @@ copy_hash.place(rely=0.42, relx=0.01, anchor="nw")
 label_refresh_hash = CTkButton(master=APP, text="Refresh Hash", command=Refresh_Hash)
 label_refresh_hash.place(rely=0.47, relx=0.01, anchor="nw")
 
+switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
+switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
+
+
 
 # Dynamic labels for CPU and memory usage
 label_memory_usage = CTkLabel(master=STATSFRAME, text=f"Memory Usage: {UsedMemory}/{TotalMemory}", font=("Arial", 30), text_color = "black")
@@ -225,16 +253,11 @@ label_memory_usage.place(rely=0.5, relx=0.01, anchor="nw")
 label_cpu_usage = CTkLabel(master=STATSFRAME, text="CPU Usage: 0%", font=("Arial", 30), text_color="black")
 label_cpu_usage.place(rely=0.7, relx=0.01, anchor="nw")
 
-
-
+# I want to cry
 
 APP.after(500, Update_Stats)  # Start the update loop
 
-with open('data.txt', 'r') as file:
-    lines = file.readlines()
-    if lines[9] == "recallon":
-        print("next commit")
-
+        
 # Start Flask API in a new thread
 api_thread = threading.Thread(target=start_API)
 api_thread.daemon = True
