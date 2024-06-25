@@ -146,6 +146,11 @@ def change_data(line, text):
     out = open('data.txt', 'w')
     out.writelines(lines)
     out.close() # there might be an efficient way to do this, maybe close when the app close i dont have to close it everytime the function is called, think about this in the future
+    
+    
+#
+def recall_system(): # im so funny with naming
+    print("WIP")
 
 # Set default appearances
 APP = CTk()
@@ -224,6 +229,11 @@ label_cpu_usage.place(rely=0.7, relx=0.01, anchor="nw")
 
 
 APP.after(500, Update_Stats)  # Start the update loop
+
+with open('data.txt', 'r') as file:
+    lines = file.readlines()
+    if lines[9] == "recallon":
+        print("next commit")
 
 # Start Flask API in a new thread
 api_thread = threading.Thread(target=start_API)
