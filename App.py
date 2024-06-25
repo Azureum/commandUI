@@ -19,6 +19,7 @@ from subprocess import call
 import threading
 import pyautogui
 from pynput import *
+from pynput.mouse import Button, Controller
 
 start_time = time.time()
 
@@ -42,6 +43,9 @@ data = open("data.txt", "r")  # bro please in the future optimize this holy moly
 password = data.readline()
 
 after_id = None
+
+# Macro stuff
+macro_check = True
 
 # Generate something random (I plastered a bunch of stuff together praying its random)
 def Mixer():
@@ -171,11 +175,40 @@ def recall_toggle():
             after_id = None
                 
 
-def device_inputs(key, filenumber):
-    with open(f"macro{filenumber}")
+# Macro Recorder
+def keyboard_inputs(key, filenumber):
+    with open(f"macros/macro{filenumber}.txt", 'a') as file:
+        file.write(f'pressed {key}\n')
+
+def mouse_move(x, y, filenumber):
+    with open(f"macros/macro{filenumber}.txt", 'a') as file:
+        file.write(f'moved {x} {y}\n')
+
+def mouse_scroll(x, y, sx, sy, filenumber):
+    with open(f"macros/macro{filenumber}.txt", 'a') as file:
+        file.write(f'scrolled {x} {y} {sx} {sy}\n')
+
+def mouse_click(x, y, is_pressed, filenumber):
+    with open(f"macros/macro{filenumber}.txt", 'a') as file:
+        file.write(f'click {"pressed" if is_pressed else "released"} {x} {y}\n')
 
 def macro_recorder(number):
-    listener = keyboard.Listener(on_press=device_inputs(number))
+    global macro_check
+    keyboard_listener = keyboard.Listener(on_press=lambda key: keyboard_inputs(key, number))
+    mouse_listener = mouse.Listener(on_move=lambda x, y: mouse_move(x, y, number), on_scroll=lambda x, y, sx, sy: mouse_scroll(x, y, sx, sy, number), on_click=lambda x, y, is_pressed: mouse_click(x, y, is_pressed, number))
+    if macro_check:
+        keyboard_listener.stop()
+        mouse_listener.stop()
+        macro_check = False
+    else:
+        open(f'macros/macro{number}.txt', 'w').close()
+        keyboard_listener.start()
+        mouse_listener.start()
+        macro_check = True
+        
+        
+# Macro reader
+
 
 # Set default appearances
 APP = CTk()
