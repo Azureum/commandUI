@@ -45,7 +45,7 @@ password = data.readline()
 after_id = None
 
 # Macro stuff
-macro_check = True
+macro_check = False
 
 # Generate something random (I plastered a bunch of stuff together praying its random)
 def Mixer():
@@ -213,44 +213,46 @@ def macro_recorder(number):
     keyboard_listener = keyboard.Listener(on_press=lambda key: keyboard_inputs(key, number))
     mouse_listener = mouse.Listener(on_move=lambda x, y: mouse_move(x, y, number), on_scroll=lambda x, y, sx, sy: mouse_scroll(x, y, sx, sy, number), on_click=lambda x, y, is_pressed, button: mouse_click(x, y, is_pressed, button, number))
     if macro_check:
+        label2_macro.configure(text="Macro is not recording...", text_color = "red")
         keyboard_listener.stop()
         mouse_listener.stop()
         macro_check = False
     else:
         open(f'macros/macro{number}.txt', 'w').close()
+        label2_macro.configure(text="Macro is recording...", text_color = "green")
         keyboard_listener.start()
         mouse_listener.start()
         macro_check = True
         
 # Macro reader
-
+read_instructions_control = False
 def read_instructions(number):
+    global read_instructions_control
     with open(f'macros/macro{number}.txt', 'r') as file:
         lines = file.readlines()
         for line in lines:
-            line.split()
-            if line[0] == "break":
-                time.sleep(int(line[1]))
-            elif line[0] == "click":
-                #click {"pressed" if is_pressed else "released"} {x} {y}
-                if line[1] == "pressed":
-                    pyautogui.mouseDown()
+            parts = line.split()
+            if parts[0] == "break":
+                time.sleep(int(parts[1]))
+            elif parts[0] == "click":
+                if parts[1] == "pressed":
+                    pyautogui.mouseDown(button=parts[2], x=int(parts[3]), y=int(parts[4]))
                 else:
-                    pyautogui.mouseUp()
-            elif line[0] == "scrolled":
-                #scrolled {x} {y} {sx} {sy}
-                if(int(line[3]) != 0):
-                    pyautogui.scroll(int(line[3]), x=int(line[1]), y=int(line[2]))
+                    pyautogui.mouseUp(button=parts[2], x=int(parts[3]), y=int(parts[4]))
+            elif parts[0] == "scrolled":
+                if int(parts[3]) != 0:
+                    pyautogui.scroll(int(parts[3]), x=int(parts[1]), y=int(parts[2]))
                 else:
-                    pyautogui.scroll(int(line[4]), x=int(line[1]), y=int(line[2]))
-            elif line[0] == "moved":
-                #moved {x} {y}
-                pyautogui.moveTo(int(line[1]), int(line[2]))
-            elif line[0] == "pressed":
-                #pressed {key}
-                pyautogui.press(line[1])
-            else: 
+                    pyautogui.scroll(int(parts[4]), x=int(parts[1]), y=int(parts[2]))
+            elif parts[0] == "moved":
+                pyautogui.moveTo(int(parts[1]), int(parts[2]))
+            elif parts[0] == "pressed":
+                pyautogui.press(parts[1])
+            else:
                 break
+        if read_instructions_control:
+            read_instructions(number)
+
 
 
 
@@ -275,8 +277,8 @@ QRFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_wid
 QRFRAME.place(x=650, y=390)  
 hash = QRCodeMaker()
 QRCODEImage = PhotoImage(file='qrCODE.png')
-Phrase_Label = CTkLabel(master=APP, text="Hash", font=("Arial", 30, "bold"))
-Phrase_Label.place(x=760,y=350)
+Phrase_Label = CTkLabel(master=APP, text="HASH", font=("Arial", 30, "bold"))
+Phrase_Label.place(x=758,y=350)
 QR_LABEL = CTkLabel(master=QRFRAME,text="",  image=QRCODEImage) #SOME WARNING OVER HERE
 QR_LABEL.pack()
 
@@ -332,6 +334,31 @@ switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
 
 switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
 switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
+
+# Below is Macro
+
+label_macro = CTkLabel(master=APP,text="MACROS", font=("Arial", 30, "bold"))
+label_macro.place(rely=0.04, relx=0.83, anchor="ne")
+
+button_macro1 = CTkButton(master=APP, text="MACRO 1", command=lambda: macro_recorder(1), width=125, height=50)
+button_macro1.place(rely=0.1, relx=0.75, anchor="ne")
+
+
+button_macro2 = CTkButton(master=APP, text="MACRO 2", command=lambda: macro_recorder(2), width=125, height=50)
+button_macro2.place(rely=0.2, relx=0.75, anchor="ne")
+
+
+button_macro3 = CTkButton(master=APP, text="MACRO 3", command=lambda: macro_recorder(3), width=125, height=50)
+button_macro3.place(rely=0.1, relx=.9, anchor="ne")
+
+
+button_macro4 = CTkButton(master=APP, text="MACRO 4", command=lambda: macro_recorder(4), width=125, height=50)
+button_macro4.place(rely=0.2, relx=.9, anchor="ne")
+
+label2_macro = CTkLabel(master=APP,text="Macro is not recording...", font=("Arial", 16), text_color="red")
+label2_macro.place(rely=0.28, relx=0.79, anchor="ne")
+
+
 
 # Dynamic labels for CPU and memory usage
 label_memory_usage = CTkLabel(master=STATSFRAME, text=f"Memory Usage: {UsedMemory}/{TotalMemory}", font=("Arial", 30), text_color = "black")
