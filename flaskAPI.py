@@ -3,6 +3,7 @@ import subprocess
 import os
 from multiprocessing import Process
 from App import change_data, read_instructions
+import time
 # running flask server
 server = Flask(__name__)
 lines = open('filename.txt', 'r').readlines()
@@ -33,6 +34,10 @@ def send_commands(verification, command):
         elif command == "sleep":
             os.system('rundll32.exe powrprof.dll,SetSuspendState 0,1,0')
             #more commands
+        elif command == "wifirestart":
+            os.system('nmcli radio wifi off')
+            time.sleep(10)
+            os.system('nmcli radio wifi on')
         return "Success", 200
     else:
         return "Forbidden", 403
@@ -47,10 +52,16 @@ def get_screen(verification):
     
 @server.route("/send_macro/<number>/<loop>/<verification>")
 def send_macro(verification,number,loop):
-    if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
-        
+    if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()) and loop == "True" or "False":
+        cd = Process(target=change_data, args= (11,loop))
+        cd.start()
+        cd.join()
+        ri = Process(target=read_instructions, args= (number))
+        ri.start()
+        ri.join()
+        return "Success", 200
     else:
         return "Forbidden", 403
 
 if  __name__ == "__main__":
-    server.run(debug=True, )
+    server.run(host="0.0.0.0", port=5000)

@@ -1,11 +1,11 @@
 plschangeme
 device
-fe2b6c20e3cbceb8ca852cc5942abb98bc329d63ee6977e3a2315cfdea77e6f0a9894fa7fbcbcaf84c796cec1c3d217e580835d252f048cd29f4e5af6a8ded8f
-Winsnet
-00:00:3.77
+339b0414aa767742115b185f2a60ff02a858f2947142bf627bc3dcb81138bad71eafee53504a50e983efcbeb0276a619bf2f4b7addd02bb66bca1be307c82fb7
+xfinitywifi
+00:00:42.99
 12th Gen Intel(R) Core(TM) i5-12600K
 AMD Radeon RX 7900 XT
-12.78GB/31.75GB
-3.0
+14.90GB/31.75GB
+3.2
 recalloff
-False
+Falseeee

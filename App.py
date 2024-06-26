@@ -212,10 +212,15 @@ def macro_recorder(number):
     global macro_check
     keyboard_listener = keyboard.Listener(on_press=lambda key: keyboard_inputs(key, number))
     mouse_listener = mouse.Listener(on_move=lambda x, y: mouse_move(x, y, number), on_scroll=lambda x, y, sx, sy: mouse_scroll(x, y, sx, sy, number), on_click=lambda x, y, is_pressed, button: mouse_click(x, y, is_pressed, button, number))
-    if macro_check:
-        label2_macro.configure(text="Macro is not recording...", text_color = "red")
+    if macro_check:     
         keyboard_listener.stop()
         mouse_listener.stop()
+        label2_macro.configure(text="Macro is not recording...", text_color = "red")    
+        with open(f"macros/macro{number}.txt" 'r+') as file:
+            lines = file.readlines()
+            file.seek(0)              
+            file.truncate()
+            file.writelines(lines[:-1])
         macro_check = False
     else:
         open(f'macros/macro{number}.txt', 'w').close()
