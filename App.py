@@ -199,26 +199,44 @@ def print_time_since_last_input(filenumber):
         file.write(f'break {time_since_last_input}\n')
     last_input_time = current_time
     
+# Macro stuff
+macro_check = False    
+keyboard_listener = None
+mouse_listener = None
 
 def macro_recorder(number):
-    global macro_check
-    keyboard_listener = keyboard.Listener(on_press=lambda key: keyboard_inputs(key, number))
-    mouse_listener = mouse.Listener(on_move=lambda x, y: mouse_move(x, y, number), on_scroll=lambda x, y, sx, sy: mouse_scroll(x, y, sx, sy, number), on_click=lambda x, y, is_pressed, button: mouse_click(x, y, is_pressed, button, number))
-    if macro_check:     
-        keyboard_listener.stop()
-        mouse_listener.stop()
-        label2_macro.configure(text="Macro is not recording...", text_color = "red")    
+    global macro_check, keyboard_listener, mouse_listener
+
+    def start_listeners():
+        global keyboard_listener, mouse_listener
+        
+        keyboard_listener = keyboard.Listener(on_press=lambda key: keyboard_inputs(key, number))
+        mouse_listener = mouse.Listener(on_move=lambda x, y: mouse_move(x, y, number),on_scroll=lambda x, y, dx, dy: mouse_scroll(x, y, dx, dy, number),on_click=lambda x, y, button, pressed: mouse_click(x, y, button, pressed, number))
+        keyboard_listener.start()
+        mouse_listener.start()
+
+    def stop_listeners():
+        global keyboard_listener, mouse_listener
+        if keyboard_listener is not None:
+            keyboard_listener.stop()
+            keyboard_listener = None
+        if mouse_listener is not None:
+            mouse_listener.stop()
+            mouse_listener = None
+
+    if macro_check:
+        stop_listeners()
+        label2_macro.configure(text="Macro is not recording...", text_color="red")
         with open(f"macros/macro{number}.txt", 'r+') as file:
             lines = file.readlines()
-            file.seek(0)              
+            file.seek(0)
             file.truncate()
-            file.writelines(lines[:-1])
+            file.writelines(lines[:-3])
         macro_check = False
     else:
         open(f'macros/macro{number}.txt', 'w').close()
-        label2_macro.configure(text="Macro is recording...", text_color = "green")
-        keyboard_listener.start()
-        mouse_listener.start()
+        label2_macro.configure(text="Macro is recording...", text_color="green")
+        start_listeners()
         macro_check = True
         
 # Macro reader
@@ -267,8 +285,6 @@ if __name__ == "__main__":
 
     after_id = None
 
-    # Macro stuff
-    macro_check = False
 
     # Macro Recorder
     last_input_time = None
