@@ -21,7 +21,6 @@ import pyautogui
 from pynput import *
 from pynput.mouse import Button, Controller
 
-start_time = time.time()
 
 '''
 data stored:
@@ -34,18 +33,9 @@ gpu
 cpu
 memory usage
 cpu usage
+recalloff
+False
 '''
-# Flask
-def start_API():
-    call(["python", "flaskAPI.py"])
-    
-data = open("data.txt", "r")  # bro please in the future optimize this holy moly why have u never realized 
-password = data.readline()
-
-after_id = None
-
-# Macro stuff
-macro_check = False
 
 # Generate something random (I plastered a bunch of stuff together praying its random)
 def Mixer():
@@ -263,126 +253,148 @@ def read_instructions(number):
 
 
 # Set default appearances
-APP = CTk()
-set_appearance_mode("Dark")
-APP.geometry("1000x700")
-APP.resizable(False, False)
+if __name__ == "__main__":
+    start_time = time.time()
 
-recallToggle = IntVar()
-recallToggle.set(0)
-with open('data.txt', 'r') as data:
-    lines = data.readlines()
-    if lines[9].strip() == "recallon":
-        recallToggle.set(1)
-
-DeviceIP, DeviceName, WifiName, CPU, UsedMemory, TotalMemory, GPU = ComputerStats()
-
-# Below is the QR Code
-
-QRFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=325, height=325)
-QRFRAME.place(x=650, y=390)  
-hash = QRCodeMaker()
-QRCODEImage = PhotoImage(file='qrCODE.png')
-Phrase_Label = CTkLabel(master=APP, text="HASH", font=("Arial", 30, "bold"))
-Phrase_Label.place(x=758,y=350)
-QR_LABEL = CTkLabel(master=QRFRAME,text="",  image=QRCODEImage) #SOME WARNING OVER HERE
-QR_LABEL.pack()
-
-# Below is for the Stats Frame
-
-STATSFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=600, height=200)
-STATSFRAME.pack(expand=True, anchor="sw", padx=10, pady=10)
-
-label6 = CTkLabel(master=STATSFRAME, text=f"CPU: {CPU}", font=("Arial", 30), text_color = "black") 
-label6.place(rely=0.1, relx=0.01, anchor="nw")
-
-label7 = CTkLabel(master=STATSFRAME, text=f"GPU: {GPU}", font=("Arial", 30), text_color = "black")
-label7.place(rely=0.3, relx=0.01, anchor="nw")
-
-# Main labels
-
-label = CTkLabel(master=APP, text="COMMANDER", font=('Helvetica', 50, 'bold'))
-label.place(relx = 0.005,rely=0.005,anchor="nw")
-
-label1 = CTkLabel(master=APP, text=f"Username: {DeviceName}", font=("Arial", 30))
-label1.place(rely=0.1, relx=0.01, anchor="nw")
-
-label2 = CTkLabel(master=APP, text=f"Device IP: {DeviceIP}", font=("Arial", 30))
-label2.place(rely=0.15, relx=0.01, anchor="nw")
-
-label_password = CTkLabel(master=APP, text=f"Password: {password}", font=("Arial", 30)) #do a click to reveal here or something
-label_password.place(rely=0.2, relx=0.01, anchor="nw")
-
-label4 = CTkLabel(master=APP, text=f"Wifi Name: {WifiName}", font=("Arial", 30))
-label4.place(rely=0.25, relx=0.01, anchor="nw")
-
-label_runtime = CTkLabel(master=APP, text=f"Runtime: loading", font=("Arial", 30))
-label_runtime.place(rely=0.3, relx=0.01, anchor="nw")
-
-Button_Password = CTkButton(master=APP, text="Change Password", command=Change_Password)
-Button_Password.place(rely=0.37, relx=0.01, anchor="nw")
-
-Entry_Password = CTkEntry(master=APP, placeholder_text="Enter new Password",width=300)
-Entry_Password.place(rely=0.37, relx=0.16, anchor="nw")
-
-label_hash = CTkLabel(master=APP, text=hash[0:45] + "...",width=1)
-label_hash.place(rely=0.42, relx=0.16, anchor="nw")
-
-copy_hash = CTkButton(master=APP, text="Copy Hash", command=Copy_Hash)
-copy_hash.place(rely=0.42, relx=0.01, anchor="nw")
-
-label_refresh_hash = CTkButton(master=APP, text="Refresh Hash", command=Refresh_Hash)
-label_refresh_hash.place(rely=0.47, relx=0.01, anchor="nw")
-
-switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
-switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
-
-
-switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
-switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
-
-# Below is Macro
-
-label_macro = CTkLabel(master=APP,text="MACROS", font=("Arial", 30, "bold"))
-label_macro.place(rely=0.04, relx=0.83, anchor="ne")
-
-button_macro1 = CTkButton(master=APP, text="MACRO 1", command=lambda: macro_recorder(1), width=125, height=50)
-button_macro1.place(rely=0.1, relx=0.75, anchor="ne")
-
-
-button_macro2 = CTkButton(master=APP, text="MACRO 2", command=lambda: macro_recorder(2), width=125, height=50)
-button_macro2.place(rely=0.2, relx=0.75, anchor="ne")
-
-
-button_macro3 = CTkButton(master=APP, text="MACRO 3", command=lambda: macro_recorder(3), width=125, height=50)
-button_macro3.place(rely=0.1, relx=.9, anchor="ne")
-
-
-button_macro4 = CTkButton(master=APP, text="MACRO 4", command=lambda: macro_recorder(4), width=125, height=50)
-button_macro4.place(rely=0.2, relx=.9, anchor="ne")
-
-label2_macro = CTkLabel(master=APP,text="Macro is not recording...", font=("Arial", 16), text_color="red")
-label2_macro.place(rely=0.28, relx=0.79, anchor="ne")
-
-
-
-# Dynamic labels for CPU and memory usage
-label_memory_usage = CTkLabel(master=STATSFRAME, text=f"Memory Usage: {UsedMemory}/{TotalMemory}", font=("Arial", 30), text_color = "black")
-label_memory_usage.place(rely=0.5, relx=0.01, anchor="nw")
-
-label_cpu_usage = CTkLabel(master=STATSFRAME, text="CPU Usage: 0%", font=("Arial", 30), text_color="black")
-label_cpu_usage.place(rely=0.7, relx=0.01, anchor="nw")
-
-# I want to cry
-
-APP.after(500, Update_Stats)  # Start the update loop
-
+    # Flask
+    def start_API():
+        call(["python", "flaskAPI.py"])
         
-# Start Flask API in a new thread
-api_thread = threading.Thread(target=start_API)
-api_thread.daemon = True
-api_thread.start()
+    data = open("data.txt", "r")  # bro please in the future optimize this holy moly why have u never realized 
+    password = data.readline()
 
-# Start Tkinter main loop in the main thread
-APP.mainloop()
+    after_id = None
 
+    # Macro stuff
+    macro_check = False
+
+    # Macro Recorder
+    last_input_time = None
+
+    # Macro reader
+    with open('data.txt', 'r') as file: 
+        line = file.readlines()
+        read_instructions_control  = line[10].strip()
+
+    APP = CTk()
+    set_appearance_mode("Dark")
+    APP.geometry("1000x700")
+    APP.resizable(False, False)
+
+    recallToggle = IntVar()
+    recallToggle.set(0)
+    with open('data.txt', 'r') as data:
+        lines = data.readlines()
+        if lines[9].strip() == "recallon":
+            recallToggle.set(1)
+
+    DeviceIP, DeviceName, WifiName, CPU, UsedMemory, TotalMemory, GPU = ComputerStats()
+
+    # Below is the QR Code
+
+    QRFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=325, height=325)
+    QRFRAME.place(x=650, y=390)  
+    hash = QRCodeMaker()
+    QRCODEImage = PhotoImage(file='qrCODE.png')
+    Phrase_Label = CTkLabel(master=APP, text="HASH", font=("Arial", 30, "bold"))
+    Phrase_Label.place(x=758,y=350)
+    QR_LABEL = CTkLabel(master=QRFRAME,text="",  image=QRCODEImage) #SOME WARNING OVER HERE
+    QR_LABEL.pack()
+
+    # Below is for the Stats Frame
+
+    STATSFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=600, height=200)
+    STATSFRAME.pack(expand=True, anchor="sw", padx=10, pady=10)
+
+    label6 = CTkLabel(master=STATSFRAME, text=f"CPU: {CPU}", font=("Arial", 30), text_color = "black") 
+    label6.place(rely=0.1, relx=0.01, anchor="nw")
+
+    label7 = CTkLabel(master=STATSFRAME, text=f"GPU: {GPU}", font=("Arial", 30), text_color = "black")
+    label7.place(rely=0.3, relx=0.01, anchor="nw")
+
+    # Main labels
+
+    label = CTkLabel(master=APP, text="COMMANDER", font=('Helvetica', 50, 'bold'))
+    label.place(relx = 0.005,rely=0.005,anchor="nw")
+
+    label1 = CTkLabel(master=APP, text=f"Username: {DeviceName}", font=("Arial", 30))
+    label1.place(rely=0.1, relx=0.01, anchor="nw")
+
+    label2 = CTkLabel(master=APP, text=f"Device IP: {DeviceIP}", font=("Arial", 30))
+    label2.place(rely=0.15, relx=0.01, anchor="nw")
+
+    label_password = CTkLabel(master=APP, text=f"Password: {password}", font=("Arial", 30)) #do a click to reveal here or something
+    label_password.place(rely=0.2, relx=0.01, anchor="nw")
+
+    label4 = CTkLabel(master=APP, text=f"Wifi Name: {WifiName}", font=("Arial", 30))
+    label4.place(rely=0.25, relx=0.01, anchor="nw")
+
+    label_runtime = CTkLabel(master=APP, text=f"Runtime: loading", font=("Arial", 30))
+    label_runtime.place(rely=0.3, relx=0.01, anchor="nw")
+
+    Button_Password = CTkButton(master=APP, text="Change Password", command=Change_Password)
+    Button_Password.place(rely=0.37, relx=0.01, anchor="nw")
+
+    Entry_Password = CTkEntry(master=APP, placeholder_text="Enter new Password",width=300)
+    Entry_Password.place(rely=0.37, relx=0.16, anchor="nw")
+
+    label_hash = CTkLabel(master=APP, text=hash[0:45] + "...",width=1)
+    label_hash.place(rely=0.42, relx=0.16, anchor="nw")
+
+    copy_hash = CTkButton(master=APP, text="Copy Hash", command=Copy_Hash)
+    copy_hash.place(rely=0.42, relx=0.01, anchor="nw")
+
+    label_refresh_hash = CTkButton(master=APP, text="Refresh Hash", command=Refresh_Hash)
+    label_refresh_hash.place(rely=0.47, relx=0.01, anchor="nw")
+
+    switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
+    switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
+
+
+    switch_recall = CTkSwitch(master=APP, text="Toggle Recall on or off.", command= recall_toggle,variable=recallToggle)
+    switch_recall.place(rely=0.51, relx=0.01, anchor="nw")
+
+    # Below is Macro
+
+    label_macro = CTkLabel(master=APP,text="MACROS", font=("Arial", 30, "bold"))
+    label_macro.place(rely=0.04, relx=0.83, anchor="ne")
+
+    button_macro1 = CTkButton(master=APP, text="MACRO 1", command=lambda: macro_recorder(1), width=125, height=50)
+    button_macro1.place(rely=0.1, relx=0.75, anchor="ne")
+
+
+    button_macro2 = CTkButton(master=APP, text="MACRO 2", command=lambda: macro_recorder(2), width=125, height=50)
+    button_macro2.place(rely=0.2, relx=0.75, anchor="ne")
+
+
+    button_macro3 = CTkButton(master=APP, text="MACRO 3", command=lambda: macro_recorder(3), width=125, height=50)
+    button_macro3.place(rely=0.1, relx=.9, anchor="ne")
+
+
+    button_macro4 = CTkButton(master=APP, text="MACRO 4", command=lambda: macro_recorder(4), width=125, height=50)
+    button_macro4.place(rely=0.2, relx=.9, anchor="ne")
+
+    label2_macro = CTkLabel(master=APP,text="Macro is not recording...", font=("Arial", 16), text_color="red")
+    label2_macro.place(rely=0.28, relx=0.79, anchor="ne")
+
+
+
+    # Dynamic labels for CPU and memory usage
+    label_memory_usage = CTkLabel(master=STATSFRAME, text=f"Memory Usage: {UsedMemory}/{TotalMemory}", font=("Arial", 30), text_color = "black")
+    label_memory_usage.place(rely=0.5, relx=0.01, anchor="nw")
+
+    label_cpu_usage = CTkLabel(master=STATSFRAME, text="CPU Usage: 0%", font=("Arial", 30), text_color="black")
+    label_cpu_usage.place(rely=0.7, relx=0.01, anchor="nw")
+
+    # I want to cry
+
+    APP.after(500, Update_Stats)  # Start the update loop
+
+            
+    # Start Flask API in a new thread
+    api_thread = threading.Thread(target=start_API)
+    api_thread.daemon = True
+    api_thread.start()
+
+    # Start Tkinter main loop in the main thread
+    APP.mainloop()

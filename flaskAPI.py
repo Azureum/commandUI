@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify, send_file
 import subprocess
 import os
-from multiprocessing import Process
+import threading
 from App import change_data, read_instructions
 import time
 # running flask server
@@ -53,10 +53,10 @@ def get_screen(verification):
 @server.route("/send_macro/<number>/<loop>/<verification>")
 def send_macro(verification,number,loop):
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()) and loop == "True" or "False":
-        cd = Process(target=change_data, args= (11,loop))
+        cd = threading.Thread(target=change_data, args= (11,loop))
         cd.start()
         cd.join()
-        ri = Process(target=read_instructions, args= (number))
+        ri = threading.Thread(target=read_instructions, args= (number))
         ri.start()
         ri.join()
         return "Success", 200
@@ -64,4 +64,4 @@ def send_macro(verification,number,loop):
         return "Forbidden", 403
 
 if  __name__ == "__main__":
-    server.run(host="0.0.0.0", port=5000)
+    server.run(debug=True)
