@@ -225,7 +225,10 @@ def macro_recorder(number):
         macro_check = True
         
 # Macro reader
-read_instructions_control = False
+with open('data.txt', 'r') as file: 
+    line = file.readlines()
+    read_instructions_control  = line[10].strip()
+
 def read_instructions(number):
     global read_instructions_control
     with open(f'macros/macro{number}.txt', 'r') as file:
@@ -252,8 +255,6 @@ def read_instructions(number):
                 break
         if read_instructions_control:
             read_instructions(number)
-
-
 
 
 # Set default appearances

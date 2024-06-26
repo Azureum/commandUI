@@ -1,13 +1,14 @@
 from flask import Flask, request, jsonify, send_file
 import subprocess
 import os
+from multiprocessing import Process
+from App import change_data, read_instructions
 # running flask server
 server = Flask(__name__)
-
+lines = open('filename.txt', 'r').readlines()
 
 @server.route("/get-data/<verification>")
 def get_data(verification):
-    lines = open('filename.txt', 'r').readlines()
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
         data = {
         "wifiname": lines[3].strip(),
@@ -24,7 +25,6 @@ def get_data(verification):
     
 @server.route("/send-command/<command>/<verification>")
 def send_commands(verification, command):
-    lines = open('filename.txt', 'r').readlines()
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
         if command == "restart":
             subprocess.call(["shutdown", "-r", "-t", "0"])
@@ -42,6 +42,13 @@ def get_screen(verification):
     lines = open('filename.txt', 'r').readlines()
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
         return send_file('screenshot.png', mimetype='image/png')
+    else:
+        return "Forbidden", 403
+    
+@server.route("/send_macro/<number>/<loop>/<verification>")
+def send_macro(verification,number,loop):
+    if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
+        
     else:
         return "Forbidden", 403
 
