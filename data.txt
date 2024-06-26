@@ -1,11 +1,11 @@
 plschangeme
-device
-36bf10b1ddcdcc2e1f2b552f43d5c110cdcd93720e160d67fd964463bc0352686495e29c840ef9cffae317c148237963661ccde4ac4170f8d60e43f4bacb1e0d
-xfinitywifi
-00:00:9.44
-12th Gen Intel(R) Core(TM) i5-12600K
-AMD Radeon RX 7900 XT
-14.12GB/31.75GB
-0.7
+username
+hash
+wifiname
+runtime
+gpu
+cpu
+memory usage
+cpu usage
 recalloff
 False

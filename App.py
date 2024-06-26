@@ -24,7 +24,7 @@ from pynput.mouse import Button, Controller
 
 '''
 data stored:
-password
+plschangeme
 username
 hash
 wifiname
@@ -193,6 +193,8 @@ def print_time_since_last_input(filenumber):
     current_time = time.time()
     if last_input_time is not None:
         time_since_last_input = round(current_time - last_input_time,2)
+    else:
+        time_since_last_input = 0
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'break {time_since_last_input}\n')
     last_input_time = current_time
@@ -206,7 +208,7 @@ def macro_recorder(number):
         keyboard_listener.stop()
         mouse_listener.stop()
         label2_macro.configure(text="Macro is not recording...", text_color = "red")    
-        with open(f"macros/macro{number}.txt" 'r+') as file:
+        with open(f"macros/macro{number}.txt", 'r+') as file:
             lines = file.readlines()
             file.seek(0)              
             file.truncate()
@@ -293,11 +295,11 @@ if __name__ == "__main__":
     # Below is the QR Code
 
     QRFRAME = CTkFrame(master=APP, fg_color="white", border_color="gray", border_width=1, width=325, height=325)
-    QRFRAME.place(x=650, y=390)  
+    QRFRAME.place(x=655, y=390)  
     hash = QRCodeMaker()
-    QRCODEImage = PhotoImage(file='qrCODE.png')
+    QRCODEImage = CTkImage(light_image=Image.open("qrCODE.png"),dark_image=Image.open("qrCODE.png"),size=(300, 300))
     Phrase_Label = CTkLabel(master=APP, text="HASH", font=("Arial", 30, "bold"))
-    Phrase_Label.place(x=758,y=350)
+    Phrase_Label.place(x=763,y=350)
     QR_LABEL = CTkLabel(master=QRFRAME,text="",  image=QRCODEImage) #SOME WARNING OVER HERE
     QR_LABEL.pack()
 

@@ -6,7 +6,7 @@ from App import change_data, read_instructions
 import time
 # running flask server
 server = Flask(__name__)
-lines = open('filename.txt', 'r').readlines()
+lines = open('data.txt', 'r').readlines()
 
 @server.route("/get-data/<verification>")
 def get_data(verification):
@@ -44,7 +44,6 @@ def send_commands(verification, command):
     
 @server.route("/get-screen/<verification>")
 def get_screen(verification):
-    lines = open('filename.txt', 'r').readlines()
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
         return send_file('screenshot.png', mimetype='image/png')
     else:
@@ -64,4 +63,4 @@ def send_macro(verification,number,loop):
         return "Forbidden", 403
 
 if  __name__ == "__main__":
-    server.run(debug=True)
+    server.run(host='0.0.0.0', port=5000)
