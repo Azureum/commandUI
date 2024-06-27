@@ -10,6 +10,9 @@ lines = open('data.txt', 'r').readlines()
 
 @server.route("/get-data/<verification>")
 def get_data(verification):
+    # input: verification
+    # output: returns data from the txt and status code
+    # purpose:  To send data from your computer to be read by the webapp
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
         data = {
         "wifiname": lines[3].strip(),
@@ -26,6 +29,9 @@ def get_data(verification):
     
 @server.route("/send-command/<command>/<verification>")
 def send_commands(verification, command):
+    # input: verification and command.
+    # output: status code
+    # purpose:  To execute commands on a computer from the webapp.
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
         if command == "restart":
             subprocess.call(["shutdown", "-r", "-t", "0"])
@@ -44,6 +50,9 @@ def send_commands(verification, command):
     
 @server.route("/get-screen/<verification>")
 def get_screen(verification):
+    # input: verification
+    # output: returns screenshot image and status code
+    # purpose: To send a screenshot image from your computer to the webapp
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()):
         return send_file('screenshot.png', mimetype='image/png')
     else:
@@ -51,6 +60,9 @@ def get_screen(verification):
     
 @server.route("/send_macro/<number>/<loop>/<verification>")
 def send_macro(verification,number,loop):
+    # input: verification, number and loop.
+    # output: status code
+    # purpose: To send macro instructions to the computer from the webapp.
     if verification == (lines[0].strip() + lines[1].strip() + lines[2].strip()) and loop == "True" or "False":
         cd = threading.Thread(target=change_data, args= (11,loop))
         cd.start()

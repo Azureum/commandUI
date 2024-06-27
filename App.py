@@ -39,6 +39,9 @@ False
 
 # Generate something random (I plastered a bunch of stuff together praying its random)
 def Mixer():
+    # input: None
+    # output: SHA-512 hash
+    # purpose: Generate a random SHA-512 hash using various system parameters for randomness
     #NOT SURE IF THIS IS FULLY RANDOM OR IDK IMA PRAY IT IS 🙏🙏🙏
     a = random.randint(1, 100) 
     c = random.randint(1, 100)  
@@ -62,6 +65,9 @@ def Mixer():
     return(hash)
 
 def QRCodeMaker():
+    # input: None
+    # output: SHA-512 hash
+    # purpose: Generate a QR code from a random SHA-512 hash and save it as an image
     hash = Mixer()
     QRCode = segno.make(hash)
     QRCode.save('qrCODE.png')
@@ -72,6 +78,9 @@ def QRCodeMaker():
     return hash
 
 def get_size(bytes, suffix="B"):
+    # input: number of bytes, suffix (default "B")
+    # output: readable string representation of size
+    # purpose: Convert bytes into a human-readable format
     factor = 1024
     for unit in ["", "K", "M", "G", "T", "P"]:
         if bytes < factor:
@@ -79,6 +88,9 @@ def get_size(bytes, suffix="B"):
         bytes /= factor
 
 def ComputerStats():
+    # input: None
+    # output: Device IP, Device Name, WiFi Name, CPU, Used Memory, Total Memory, GPU
+    # purpose: Retrieve and store computer stats
     DeviceIP = socket.gethostbyname(socket.gethostname())
     DeviceName = socket.gethostname()
     change_data(2,DeviceName)
@@ -104,6 +116,9 @@ def ComputerStats():
     return DeviceIP, DeviceName, WifiName, CPU, UsedMemory, TotalMemory, GPU
 
 def Update_Stats():
+    # input: None
+    # output: None
+    # purpose: Update and display system stats periodically
     # Get updated CPU and memory usage
     cpu_usage = psutil.cpu_percent(interval=1)
     memory = psutil.virtual_memory()
@@ -125,6 +140,9 @@ def Update_Stats():
     APP.after(500, Update_Stats)  # Update every .5 second
 
 def Change_Password():
+    # input: None
+    # output: None
+    # purpose: Change the password and update the display
     newPassword = Entry_Password.get()
     change_data(1,newPassword)
     label_password.configure(text=f"Password: {newPassword}")
@@ -136,9 +154,15 @@ def Refresh_Hash():
     
 
 def Copy_Hash():
+    # input: None
+    # output: None
+    # purpose: Copy the hash to clipboard
     pyperclip.copy(hash)
     
 def change_data(line, text):
+    # input: line number, text
+    # output: None
+    # purpose: Change specific line in data file
     lines = open('data.txt', 'r').readlines()
     lines[line - 1] = text + '\n'  
     out = open('data.txt', 'w')
@@ -147,12 +171,18 @@ def change_data(line, text):
     
 # kinda ironic, that im getting the code for something similar to the recall system from a video that teaches how to make malware? (the youtuber does like security stuff)
 def recall_system(): # im so funny with naming
+    # input: None
+    # output: None
+    # purpose: Capture and save screenshots periodically
     global after_id
     Screenshot = pyautogui.screenshot()
     Screenshot.save("Screenshot.png")
     APP.after(1900, recall_system)  #take a screenshot every 1.9 seconds
     
 def recall_toggle():
+    # input: None
+    # output: None
+    # purpose: Toggle screenshot capturing
     global after_id
     if switch_recall.get() == 1:
         change_data(10, "recallon")
@@ -163,40 +193,55 @@ def recall_toggle():
         if after_id is not None:
             APP.after_cancel(after_id) 
             after_id = None
-                
 
 # Macro Recorder
 last_input_time = None
 
 def keyboard_inputs(key, filenumber):
+    # input: key, filenumber
+    # output: None
+    # purpose: Record keyboard inputs
     print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'pressed {key}\n')
 
 def mouse_move(x, y, filenumber):
+    # input: x, y, filenumber
+    # output: None
+    # purpose: Record mouse movements
     print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'moved {x} {y}\n')
 
 def mouse_scroll(x, y, sx, sy, filenumber):
+    # input: x, y, scroll x, scroll y, filenumber
+    # output: None
+    # purpose: Record mouse scrolls
     print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'scrolled {x} {y} {sx} {sy}\n')
 
 def mouse_click(x, y, is_pressed, button, filenumber):
+    # input: x, y, is_pressed, button, filenumber
+    # output: None
+    # purpose: Record mouse clicks
     print_time_since_last_input(filenumber)
     with open(f"macros/macro{filenumber}.txt", 'a') as file:
         file.write(f'click {"pressed" if is_pressed else "released"} {button} {x} {y}\n')
         
 def print_time_since_last_input(filenumber):
+    # input: filenumber
+    # output: None
+    # purpose: Log time since last input
     global last_input_time
     current_time = time.time()
     if last_input_time is not None:
-        time_since_last_input = round(current_time - last_input_time,2)
+        time_since_last_input = round(current_time - last_input_time, 2)
     else:
         time_since_last_input = 0
-    with open(f"macros/macro{filenumber}.txt", 'a') as file:
-        file.write(f'break {time_since_last_input}\n')
+    if time_since_last_input != 0.0:
+        with open(f"macros/macro{filenumber}.txt", 'a') as file:
+            file.write(f'break {time_since_last_input}\n')
     last_input_time = current_time
     
 # Macro stuff
@@ -205,7 +250,11 @@ keyboard_listener = None
 mouse_listener = None
 
 def macro_recorder(number):
-    global macro_check, keyboard_listener, mouse_listener
+    #input: macro number
+    #output: None
+    #purpose: Start or stop macro recording
+    
+    global macro_check, keyboard_listener, mouse_listener, last_input_time
 
     def start_listeners():
         global keyboard_listener, mouse_listener
@@ -216,13 +265,14 @@ def macro_recorder(number):
         mouse_listener.start()
 
     def stop_listeners():
-        global keyboard_listener, mouse_listener
+        global keyboard_listener, mouse_listener, last_input_time
         if keyboard_listener is not None:
             keyboard_listener.stop()
             keyboard_listener = None
         if mouse_listener is not None:
             mouse_listener.stop()
             mouse_listener = None
+        last_input_time = None
 
     if macro_check:
         stop_listeners()
@@ -245,6 +295,9 @@ with open('data.txt', 'r') as file:
     read_instructions_control  = line[10].strip()
 
 def read_instructions(number):
+    #input: macro number
+    #output: None
+    #purpose: Read and execute macro instructions
     global read_instructions_control
     with open(f'macros/macro{number}.txt', 'r') as file:
         lines = file.readlines()
@@ -253,7 +306,7 @@ def read_instructions(number):
             if parts[0] == "break":
                 time.sleep(int(parts[1]))
             elif parts[0] == "click":
-                if parts[1] == "pressed":
+                if parts[1] == "True":
                     pyautogui.mouseDown(button=parts[2], x=int(parts[3]), y=int(parts[4]))
                 else:
                     pyautogui.mouseUp(button=parts[2], x=int(parts[3]), y=int(parts[4]))
