@@ -4,15 +4,19 @@ from flask_limiter.util import get_remote_address
 import subprocess
 import os
 import threading
+import logging
 from App import change_data, read_instructions
+from waitress import serve
 import time
+
 # running flask server
+logging.basicConfig(level=logging.INFO)
 server = Flask(__name__)
 lines = open('data.txt', 'r').readlines()
 
 limiter = Limiter(
     get_remote_address,
-    server=server,
+    app=server,
     default_limits=["3600 per hour"],
     storage_uri="memory://",
 )
@@ -73,7 +77,7 @@ def send_commands(verification, command):
         return jsonify({"status": "Forbidden"}), 403
     
 @server.route("/get-screen/<verification>")
-@limiter.limit("10/second")
+@limiter.limit("10/second",override_defaults=True)
 def get_screen(verification):
     # input: verification
     # output: returns screenshot image and status code
@@ -100,4 +104,4 @@ def send_macro(verification,number,loop):
         return jsonify({"status": "Forbidden"}), 403
 
 if  __name__ == "__main__":
-    server.run(host='0.0.0.0', port=5000)
+    serve(server, host="", port=80)
