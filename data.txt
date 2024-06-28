@@ -1,11 +1,11 @@
-password
-device
-311c573723f5db7822e6e46555d5701b292554388b95996f8ffc8f4e5ea2e8835b211c17c408a5cc41a12a7011d51241c729ede09b62889845de6472c42203cf
-Winsnet
-00:01:16.26
-12th Gen Intel(R) Core(TM) i5-12600K
-AMD Radeon RX 7900 XT
-28.09GB/31.75GB
-1.8
+plschangeme
+username
+hash
+wifiname
+runtime
+gpu
+cpu
+memory usage
+cpu usage
 recalloff
 False
