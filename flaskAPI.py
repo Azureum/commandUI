@@ -17,7 +17,6 @@ limiter = Limiter(
     storage_uri="memory://",
 )
 
-
 @server.route("/<verification>")
 @limiter.limit("2/minute")
 def verify(verification):
@@ -31,7 +30,7 @@ def verify(verification):
 
 
 @server.route("/get-data/<verification>")
-@limiter.limit("1/second")
+@limiter.limit("2/second")
 def get_data(verification):
     # input: verification
     # output: returns data from the txt and status code
@@ -43,7 +42,8 @@ def get_data(verification):
         "cpu": lines[5].strip(),
         "gpu": lines[6].strip(),
         "memory_usage": lines[7].strip(),
-        "cpu_usage": lines[8].strip()
+        "cpu_usage": lines[8].strip(),
+        "recallstatus": lines[9].strip()
         }
 
         return jsonify(data), 200
@@ -73,7 +73,7 @@ def send_commands(verification, command):
         return jsonify({"status": "Forbidden"}), 403
     
 @server.route("/get-screen/<verification>")
-@limiter.limit("1/second")
+@limiter.limit("10/second")
 def get_screen(verification):
     # input: verification
     # output: returns screenshot image and status code
@@ -95,9 +95,9 @@ def send_macro(verification,number,loop):
         ri = threading.Thread(target=read_instructions, args= (number))
         ri.start()
         ri.join()
-        return "Success", 200
+        return jsonify({"status": "Success"}), 200
     else:
-        return "Forbidden", 403
+        return jsonify({"status": "Forbidden"}), 403
 
 if  __name__ == "__main__":
     server.run(host='0.0.0.0', port=5000)
