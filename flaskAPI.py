@@ -36,18 +36,19 @@ def verify(verification):
     else:
         return jsonify({"status": "not verified"}), 401
 
-@server.route("/get-data/<verification>", methods=['GET'])
+@server.route("/get-data/<verification>")
 @limiter.limit("3/second")
 def get_data(verification):
+    lines = open('data.txt', 'r').readlines()
     if verify_user(verification):
         data = {
-            "wifiname": lines[3].strip(),
-            "runtime": lines[4].strip(),
-            "cpu": lines[5].strip(),
-            "gpu": lines[6].strip(),
-            "memory_usage": lines[7].strip(),
-            "cpu_usage": lines[8].strip(),
-            "recallstatus": lines[9].strip()
+            "wifiname": str(lines[3].strip()),
+            "runtime": str(lines[4].strip()),
+            "cpu": str(lines[5].strip()),
+            "gpu": str(lines[6].strip()),
+            "memory_usage": str(lines[7].strip()),
+            "cpu_usage": str(lines[8].strip()),
+            "recallstatus": str(lines[9].strip())
         }
         return jsonify(data), 200
     else:
