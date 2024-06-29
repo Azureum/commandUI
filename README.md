@@ -13,7 +13,7 @@ Commander is an application that allows you to access your computer from the con
 - If you are accessing this locally you don't need to do much all you need to do is run app.py
 - ( go to the other repo if you havent )
 - open VSC or a code editor that supports commander, then go to the terminal and put in the command  ``` npm run dev ```
-- Now run the app.py (if you havent), and go to your mobile device put in the information and login.
+- Now run the app.py (if you havent), and go to your mobile device put in the IP displayed on the CommanderUI and the port 3000 ( 777.888.99.0:8000 ) then put in the other information and login.
 -  BOOM
 
 ## Access from internet
