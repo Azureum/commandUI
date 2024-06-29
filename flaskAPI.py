@@ -86,20 +86,23 @@ def get_screen(verification):
     else:
         return jsonify({"status": "Forbidden"}), 403
 
-@server.route("/send_macro/<number>/<loop>/<verification>", methods=['GET'])
+@server.route("/send-macro/<number>/<loop>/<verification>", methods=['GET'])
 def send_macro(verification, number, loop):
-    if verify_user(verification) and loop in ["True", "False"]:
+    if verify_user(verification):
         try:
+            loop = True if loop.lower() == "true" else False
             cd = threading.Thread(target=change_data, args=(11, loop))
             cd.start()
             cd.join()
-            ri = threading.Thread(target=read_instructions, args=(number,))
+            ri = threading.Thread(target=read_instructions, args=(int(number),)) 
             ri.start()
             ri.join()
             return jsonify({"status": "Success"}), 200
+        except ValueError:
+            return jsonify({"status": "Error", "message": "Invalid loop parameter"}), 400
         except Exception as e:
             logging.error(f"Macro execution failed: {e}")
-            return jsonify({"status": "Error"}), 500
+            return jsonify({"status": "Error", "message": str(e)}), 500
     else:
         return jsonify({"status": "Forbidden"}), 403
 

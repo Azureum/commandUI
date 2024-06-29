@@ -163,11 +163,14 @@ def change_data(line, text):
     # input: line number, text
     # output: None
     # purpose: Change specific line in data file
+    if not isinstance(text, str):
+        text = str(text)
+    
     lines = open('data.txt', 'r').readlines()
-    lines[line - 1] = text + '\n'  
-    out = open('data.txt', 'w')
-    out.writelines(lines)
-    out.close() # there might be an efficient way to do this, maybe close when the app close i dont have to close it everytime the function is called, think about this in the future
+    lines[line - 1] = text + '\n'
+    
+    with open('data.txt', 'w') as out:
+        out.writelines(lines) 
     
 # kinda ironic, that im getting the code for something similar to the recall system from a video that teaches how to make malware? (the youtuber does like security stuff)
 def recall_system(): # im so funny with naming
@@ -304,7 +307,7 @@ def read_instructions(number):
         for line in lines:
             parts = line.split()
             if parts[0] == "break":
-                time.sleep(int(parts[1]))
+                time.sleep(float(parts[1])) 
             elif parts[0] == "click":
                 if parts[1] == "True":
                     pyautogui.mouseDown(button=parts[2], x=int(parts[3]), y=int(parts[4]))
@@ -320,7 +323,7 @@ def read_instructions(number):
             elif parts[0] == "pressed":
                 pyautogui.press(parts[1])
             else:
-                break
+                break  
         if read_instructions_control:
             read_instructions(number)
 
