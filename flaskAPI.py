@@ -37,7 +37,7 @@ def verify(verification):
         return jsonify({"status": "not verified"}), 401
 
 @server.route("/get-data/<verification>")
-@limiter.limit("3/second")
+@limiter.limit("3/second", override_defaults=True)
 def get_data(verification):
     lines = open('data.txt', 'r').readlines()
     if verify_user(verification):
