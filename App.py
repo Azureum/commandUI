@@ -180,7 +180,7 @@ def recall_system(): # im so funny with naming
     global after_id
     Screenshot = pyautogui.screenshot()
     Screenshot.save("Screenshot.png")
-    APP.after(1900, recall_system)  #take a screenshot every 1.9 seconds
+    APP.after(1000, recall_system)  #take a screenshot every 1 second
     
 def recall_toggle():
     # input: None
@@ -297,35 +297,40 @@ with open('data.txt', 'r') as file:
     line = file.readlines()
     read_instructions_control  = line[10].strip()
 
+
+
 def read_instructions(number):
     #input: macro number
     #output: None
     #purpose: Read and execute macro instructions
     global read_instructions_control
-    with open(f'macros/macro{number}.txt', 'r') as file:
-        lines = file.readlines()
-        for line in lines:
-            parts = line.split()
-            if parts[0] == "break":
-                time.sleep(float(parts[1])) 
-            elif parts[0] == "click":
-                if parts[1] == "True":
-                    pyautogui.mouseDown(button=parts[2], x=int(parts[3]), y=int(parts[4]))
-                else:
-                    pyautogui.mouseUp(button=parts[2], x=int(parts[3]), y=int(parts[4]))
-            elif parts[0] == "scrolled":
-                if int(parts[3]) != 0:
-                    pyautogui.scroll(int(parts[3]), x=int(parts[1]), y=int(parts[2]))
-                else:
-                    pyautogui.scroll(int(parts[4]), x=int(parts[1]), y=int(parts[2]))
-            elif parts[0] == "moved":
-                pyautogui.moveTo(int(parts[1]), int(parts[2]))
-            elif parts[0] == "pressed":
-                pyautogui.press(parts[1])
-            else:
-                break  
-        if read_instructions_control:
-            read_instructions(number)
+    while read_instructions_control:
+        try:
+            with open(f'macros/macro{number}.txt', 'r') as file:
+                lines = file.readlines()
+                for line in lines:
+                    parts = line.split()
+                    if parts[0] == "break":
+                        time.sleep(float(parts[1])) 
+                    elif parts[0] == "click":
+                        if parts[1] == "True":
+                            pyautogui.mouseDown(button="left", x=int(parts[3]), y=int(parts[4]))
+                        else:
+                            pyautogui.mouseUp(button="left", x=int(parts[3]), y=int(parts[4]))
+                    elif parts[0] == "scrolled":
+                        if int(parts[3]) != 0:
+                            pyautogui.scroll(int(parts[3]), x=int(parts[1]), y=int(parts[2]))
+                        else:
+                            pyautogui.scroll(int(parts[4]), x=int(parts[1]), y=int(parts[2]))
+                    elif parts[0] == "moved":
+                        pyautogui.moveTo(int(parts[1]), int(parts[2]))
+                    elif parts[0] == "pressed":
+                        pyautogui.press(parts[1])
+                    else:
+                        break  
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            break
 
 
 # Set default appearances
