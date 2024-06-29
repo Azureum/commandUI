@@ -276,23 +276,32 @@ def macro_recorder(number):
             mouse_listener.stop()
             mouse_listener = None
         last_input_time = None
+        
 
     if macro_check:
         stop_listeners()
         label2_macro.configure(text="Macro is not recording...", text_color="red")
-        with open(f"macros/macro{number}.txt", 'r+') as file:
+        with open(f"macros/macro{number}.txt", 'r') as file:
             lines = file.readlines()
-            file.seek(0)
-            file.truncate()
-            file.writelines(lines[:-3])
+            count = sum(1 for line in lines if line.startswith('everything moved'))
+            half_count = count // 2
+            filtered_lines = []
+            removed_count = 0
+            for line in lines:
+                if line.startswith('moved') and removed_count < half_count:
+                    removed_count += 1
+                else:
+                    filtered_lines.append(line)
+        with open(f"macros/macro{number}.txt", 'w') as file:
+            file.writelines(filtered_lines[:-3])
         macro_check = False
     else:
         open(f'macros/macro{number}.txt', 'w').close()
         label2_macro.configure(text="Macro is recording...", text_color="green")
         start_listeners()
         macro_check = True
-        
 # Macro reader
+
 with open('data.txt', 'r') as file: 
     line = file.readlines()
     read_instructions_control  = line[10].strip()
